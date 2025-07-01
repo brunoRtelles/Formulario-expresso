@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formulário de Acesso - Expresso Rota Livre</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f3f3f3;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    select, input[type="text"], textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #004AAD;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Formulário de Acesso</h1>
+    <form id="formulario">
+      <label for="empresa">Empresa:</label>
+      <input type="text" name="empresa" required />
+
+      <label for="tipo_acesso">Tipo de Acesso:</label>
+      <select name="tipo_acesso" required>
+        <option value="">Selecione</option>
+        <option value="Acesso à unidade">Acesso à unidade</option>
+        <option value="Acesso a sistema">Acesso a sistema</option>
+      </select>
+
+      <label for="responsavel">Responsável:</label>
+      <input type="text" name="responsavel" required />
+
+      <label for="necessidade">Descreva a necessidade:</label>
+      <textarea name="necessidade" required></textarea>
+
+      <label for="urgencia">Urgência:</label>
+      <select name="urgencia">
+        <option value="Alta">Alta</option>
+        <option value="Média">Média</option>
+        <option value="Baixa">Baixa</option>
+      </select>
+
+      <button type="submit">Enviar</button>
+    </form>
+    <div id="mensagem"></div>
+  </div>
+
+  <script>
+    document.getElementById("formulario").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const json = {};
+      formData.forEach((v, k) => json[k] = v);
+
+      const resposta = await fetch("/enviar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(json)
+      });
+
+      const msg = document.getElementById("mensagem");
+      if (resposta.ok) {
+        msg.innerHTML = "<p style='color:green;'>Formulário enviado com sucesso!</p>";
+        this.reset();
+      } else {
+        msg.innerHTML = "<p style='color:red;'>Erro ao enviar. Tente novamente.</p>";
+      }
+    });
+  </script>
+</body>
+</html>
